@@ -22,9 +22,20 @@ struct repository {
 	char *commondir;
 
 	/*
-	 * Holds any information related to accessing the raw object content.
+	 * Holds any information needed to retrieve the raw content
+	 * of objects. The object_parser uses this to get object
+	 * content which it then parses.
 	 */
 	struct raw_object_store *objects;
+
+	/*
+	 * All objects in this repository that have been parsed. This structure
+	 * owns all objects it references, so users of "struct object *"
+	 * generally do not need to free them; instead, when a repository is no
+	 * longer used, call parsed_object_pool_clear() on this structure, which
+	 * is called by the repositories repo_clear on its desconstruction.
+	 */
+	struct parsed_object_pool *parsed_objects;
 
 	/* The store in which the refs are held. */
 	struct ref_store *refs;
